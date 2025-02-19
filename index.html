@@ -5,53 +5,178 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>테슬람 테스터 v1.0</title>
     <style>
-        /* 배경과 기본 스타일 */
-        body {
+        /* 기본 스타일 및 스마트폰 최적화 */
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
-            background: linear-gradient(135deg, #000, #1a1a3d);
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #0d1b2a, #1b263b);
             color: #fff;
-            overflow: hidden;
-            height: 100vh;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
+            overflow-x: hidden;
         }
 
         /* 시작 화면 */
-        #시작화면 { text-align: center; animation: fadeIn 2s ease-in; }
-        #시작화면 h1 { font-size: 4em; text-transform: uppercase; color: #ff0033; text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0066; animation: pulse 2s infinite; margin-bottom: 10px; }
-        #시작화면 p { font-size: 2.5em; color: #fff; text-shadow: 0 0 10px #00ccff; margin-top: 0; }
-        #시작버튼 { padding: 20px 40px; font-size: 1.5em; background: #ff0033; border: none; border-radius: 10px; color: #fff; cursor: pointer; box-shadow: 0 0 15px #ff0033; transition: transform 0.3s; }
-        #시작버튼:hover { transform: scale(1.1); }
+        #시작화면 {
+            text-align: center;
+            padding: 20px;
+            animation: fadeIn 1.5s ease-in;
+        }
+        #시작화면 img {
+            width: 150px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.5));
+        }
+        #시작화면 h1 {
+            font-size: clamp(2rem, 6vw, 4rem);
+            text-transform: uppercase;
+            color: #ff0033;
+            text-shadow: 0 0 15px rgba(255, 0, 51, 0.8);
+            margin-bottom: 10px;
+        }
+        #시작화면 p {
+            font-size: clamp(1.2rem, 4vw, 2.5rem);
+            color: #e0e0e0;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+            margin-bottom: 30px;
+        }
+        #시작버튼 {
+            padding: 15px 40px;
+            font-size: 1.2rem;
+            background: linear-gradient(90deg, #ff0033, #ff3366);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 0, 51, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        #시작버튼:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 51, 0.7);
+        }
 
         /* 퀴즈 화면 */
-        #퀴즈화면 { display: none; width: 90%; max-width: 800px; text-align: center; position: relative; }
-        #배경비디오 { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.5; }
-        #질문 { font-size: 2em; margin: 20px 0; text-shadow: 0 0 10px #00ccff; }
-        #선택지 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 20px; }
-        .선택지버튼 { padding: 15px; font-size: 1.2em; background: rgba(255, 255, 255, 0.1); border: 2px solid #00ccff; border-radius: 10px; color: #fff; cursor: pointer; transition: all 0.3s; }
-        .선택지버튼:hover { background: #00ccff; color: #000; }
-        #타이머 { font-size: 1.5em; margin: 10px 0; color: #ffcc00; }
-        #진행바 { width: 100%; height: 10px; background: #333; border-radius: 5px; margin: 20px 0; }
-        #진행바채움 { height: 100%; background: #ff0033; width: 0%; border-radius: 5px; transition: width 0.5s; }
+        #퀴즈화면 {
+            display: none;
+            width: 90%;
+            max-width: 600px;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+        #질문 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin: 20px 0;
+            color: #00ccff;
+            text-shadow: 0 0 10px rgba(0, 204, 255, 0.5);
+        }
+        #선택지 {
+            display: grid;
+            gap: 15px;
+            padding: 0 10px;
+        }
+        .선택지버튼 {
+            padding: 15px;
+            font-size: 1.1rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #00ccff;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .선택지버튼:hover {
+            background: #00ccff;
+            color: #000;
+            transform: scale(1.05);
+        }
+        #타이머 {
+            font-size: 1.2rem;
+            color: #ffcc00;
+            margin: 10px 0;
+        }
+        #진행바 {
+            width: 100%;
+            height: 8px;
+            background: #333;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+        #진행바채움 {
+            height: 100%;
+            background: #ff0033;
+            width: 0%;
+            border-radius: 4px;
+            transition: width 0.5s;
+        }
 
         /* 점수 화면 */
-        #점수화면 { display: none; text-align: center; animation: fadeIn 2s ease-in; }
-        #점수화면 h2 { font-size: 3em; color: #00ccff; text-shadow: 0 0 20px #00ccff; }
-        #최종점수 { font-size: 4em; color: #ff0033; animation: pulse 2s infinite; }
-        #등급 { font-size: 2em; margin: 20px 0; }
-        #공유버튼, #다시하기버튼 { padding: 15px 30px; font-size: 1.2em; background: #ff0033; border: none; border-radius: 10px; color: #fff; cursor: pointer; margin: 10px; box-shadow: 0 0 15px #ff0033; }
+        #점수화면 {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: fadeIn 1.5s ease-in;
+        }
+        #점수화면 h2 {
+            font-size: clamp(2rem, 5vw, 3rem);
+            color: #00ccff;
+            text-shadow: 0 0 15px rgba(0, 204, 255, 0.8);
+        }
+        #최종점수 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: #ff0033;
+            animation: pulse 2s infinite;
+        }
+        #등급 {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            margin: 20px 0;
+        }
+        #공유버튼, #다시하기버튼 {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            background: linear-gradient(90deg, #ff0033, #ff3366);
+            border: none;
+            border-radius: 25px;
+            color: #fff;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(255, 0, 51, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        #공유버튼:hover, #다시하기버튼:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 0, 51, 0.7);
+        }
 
         /* 애니메이션 */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
+
+        /* 반응형 조정 */
+        @media (max-width: 600px) {
+            #선택지 { grid-template-columns: 1fr; }
+            #퀴즈화면, #점수화면 { width: 95%; padding: 15px; }
+            #시작버튼, #공유버튼, #다시하기버튼 { width: 80%; max-width: 300px; }
+        }
     </style>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- 시작 화면 -->
     <div id="시작화면">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/b/bd/Tesla_Motors.svg/1200px-Tesla_Motors.svg.png" alt="Tesla Logo">
         <h1>테슬람 테스터 v1.0</h1>
         <p>당신은 진정한 테슬람인가요? 한번 도전해 보세요!</p>
         <button id="시작버튼">퀴즈 시작</button>
@@ -59,9 +184,6 @@
 
     <!-- 퀴즈 화면 -->
     <div id="퀴즈화면">
-        <video id="배경비디오" autoplay loop muted>
-            <source src="https://example.com/tesla-bg.mp4" type="video/mp4">
-        </video>
         <div id="질문"></div>
         <div id="타이머">시간: 15초</div>
         <div id="선택지"></div>
@@ -216,7 +338,7 @@
             점수화면.style.display = 'block';
             최종점수요소.textContent = `${점수}/${게임당질문수}`;
             let 등급 = '';
-            if (점수 === 10) 등급 = "루디크러스 모드의 제왕";
+            if (점수 === 10) 등급 = "당신은 일론 머스크!";
             else if (점수 >= 8) 등급 = "일론의 오른팔";
             else if (점수 >= 6) 등급 = "인증된 테슬람";
             else if (점수 >= 4) 등급 = "테슬람 흉내쟁이";
@@ -228,9 +350,12 @@
 
         // 점수 공유 함수
         function 점수공유() {
+            const baseText = `테슬람 테스터 v1.0에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]}`;
             const 링크 = "https://sladoc11.github.io/trivia/";
-            const 텍스트 = `테슬람 테스터 v1.0에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]} 지금 플레이: ${링크}`;
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(텍스트)}`);
+            const 텍스트 = `${baseText} 지금 플레이: ${링크}`;
+            const 트윗URL = `https://twitter.com/intent/tweet?text=${encodeURIComponent(텍스트)}`;
+            console.log("트윗 URL:", 트윗URL);
+            window.open(트윗URL, '_blank');
         }
 
         // 초기화하고 시작 함수
