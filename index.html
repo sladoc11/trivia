@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>엘론의 전기 트리비아 대결</title>
+    <title>테슬람 테스터 v1.0</title>
     <style>
         /* 배경과 기본 스타일 */
         body {
@@ -21,7 +21,8 @@
 
         /* 시작 화면 */
         #시작화면 { text-align: center; animation: fadeIn 2s ease-in; }
-        #시작화면 h1 { font-size: 4em; text-transform: uppercase; color: #ff0033; text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0066; animation: pulse 2s infinite; }
+        #시작화면 h1 { font-size: 4em; text-transform: uppercase; color: #ff0033; text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0066; animation: pulse 2s infinite; margin-bottom: 10px; }
+        #시작화면 p { font-size: 2.5em; color: #fff; text-shadow: 0 0 10px #00ccff; margin-top: 0; }
         #시작버튼 { padding: 20px 40px; font-size: 1.5em; background: #ff0033; border: none; border-radius: 10px; color: #fff; cursor: pointer; box-shadow: 0 0 15px #ff0033; transition: transform 0.3s; }
         #시작버튼:hover { transform: scale(1.1); }
 
@@ -51,7 +52,8 @@
 <body>
     <!-- 시작 화면 -->
     <div id="시작화면">
-        <h1>엘론의 전기 트리비아 대결</h1>
+        <h1>테슬람 테스터 v1.0</h1>
+        <p>당신은 진정한 테슬람인가요? 한번 도전해 보세요!</p>
         <button id="시작버튼">퀴즈 시작</button>
     </div>
 
@@ -226,7 +228,7 @@
 
         // 점수 공유 함수
         function 점수공유() {
-            const 텍스트 = `엘론의 전기 트리비아 대결에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]}. 지금 플레이: [링크]`;
+            const 텍스트 = `테슬람 테스터 v1.0에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]}. 지금 플레이: [링크]`;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(텍스트)}`);
         }
 
