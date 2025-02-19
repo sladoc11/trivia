@@ -1,10 +1,11 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ko">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Elon’s Electric Trivia Throwdown</title>
+    <title>엘론의 전기 트리비아 대결</title>
     <style>
+        /* 배경과 기본 스타일 */
         body {
             margin: 0;
             padding: 0;
@@ -18,317 +19,141 @@
             align-items: center;
         }
 
-        #title-screen {
-            text-align: center;
-            animation: fadeIn 2s ease-in;
-        }
-        #title-screen h1 {
-            font-size: 4em;
-            text-transform: uppercase;
-            color: #ff0033;
-            text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0066;
-            animation: pulse 2s infinite;
-        }
-        #start-btn {
-            padding: 20px 40px;
-            font-size: 1.5em;
-            background: #ff0033;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            cursor: pointer;
-            box-shadow: 0 0 15px #ff0033;
-            transition: transform 0.3s;
-        }
-        #start-btn:hover {
-            transform: scale(1.1);
-        }
+        /* 시작 화면 */
+        #시작화면 { text-align: center; animation: fadeIn 2s ease-in; }
+        #시작화면 h1 { font-size: 4em; text-transform: uppercase; color: #ff0033; text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0066; animation: pulse 2s infinite; }
+        #시작버튼 { padding: 20px 40px; font-size: 1.5em; background: #ff0033; border: none; border-radius: 10px; color: #fff; cursor: pointer; box-shadow: 0 0 15px #ff0033; transition: transform 0.3s; }
+        #시작버튼:hover { transform: scale(1.1); }
 
-        #quiz-screen {
-            display: none;
-            width: 90%;
-            max-width: 800px;
-            text-align: center;
-            position: relative;
-        }
-        #background-video {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            z-index: -1;
-            opacity: 0.5;
-        }
-        #question {
-            font-size: 2em;
-            margin: 20px 0;
-            text-shadow: 0 0 10px #00ccff;
-        }
-        #options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            padding: 0 20px;
-        }
-        .option-btn {
-            padding: 15px;
-            font-size: 1.2em;
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid #00ccff;
-            border-radius: 10px;
-            color: #fff;
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .option-btn:hover {
-            background: #00ccff;
-            color: #000;
-        }
-        #timer {
-            font-size: 1.5em;
-            margin: 10px 0;
-            color: #ffcc00;
-        }
-        #progress {
-            width: 100%;
-            height: 10px;
-            background: #333;
-            border-radius: 5px;
-            margin: 20px 0;
-        }
-        #progress-bar {
-            height: 100%;
-            background: #ff0033;
-            width: 0%;
-            border-radius: 5px;
-            transition: width 0.5s;
-        }
+        /* 퀴즈 화면 */
+        #퀴즈화면 { display: none; width: 90%; max-width: 800px; text-align: center; position: relative; }
+        #배경비디오 { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: -1; opacity: 0.5; }
+        #질문 { font-size: 2em; margin: 20px 0; text-shadow: 0 0 10px #00ccff; }
+        #선택지 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; padding: 0 20px; }
+        .선택지버튼 { padding: 15px; font-size: 1.2em; background: rgba(255, 255, 255, 0.1); border: 2px solid #00ccff; border-radius: 10px; color: #fff; cursor: pointer; transition: all 0.3s; }
+        .선택지버튼:hover { background: #00ccff; color: #000; }
+        #타이머 { font-size: 1.5em; margin: 10px 0; color: #ffcc00; }
+        #진행바 { width: 100%; height: 10px; background: #333; border-radius: 5px; margin: 20px 0; }
+        #진행바채움 { height: 100%; background: #ff0033; width: 0%; border-radius: 5px; transition: width 0.5s; }
 
-        #score-screen {
-            display: none;
-            text-align: center;
-            animation: fadeIn 2s ease-in;
-        }
-        #score-screen h2 {
-            font-size: 3em;
-            color: #00ccff;
-            text-shadow: 0 0 20px #00ccff;
-        }
-        #final-score {
-            font-size: 4em;
-            color: #ff0033;
-            animation: pulse 2s infinite;
-        }
-        #rank {
-            font-size: 2em;
-            margin: 20px 0;
-        }
-        #share-btn, #retry-btn {
-            padding: 15px 30px;
-            font-size: 1.2em;
-            background: #ff0033;
-            border: none;
-            border-radius: 10px;
-            color: #fff;
-            cursor: pointer;
-            margin: 10px;
-            box-shadow: 0 0 15px #ff0033;
-        }
+        /* 점수 화면 */
+        #점수화면 { display: none; text-align: center; animation: fadeIn 2s ease-in; }
+        #점수화면 h2 { font-size: 3em; color: #00ccff; text-shadow: 0 0 20px #00ccff; }
+        #최종점수 { font-size: 4em; color: #ff0033; animation: pulse 2s infinite; }
+        #등급 { font-size: 2em; margin: 20px 0; }
+        #공유버튼, #다시하기버튼 { padding: 15px 30px; font-size: 1.2em; background: #ff0033; border: none; border-radius: 10px; color: #fff; cursor: pointer; margin: 10px; box-shadow: 0 0 15px #ff0033; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
+        /* 애니메이션 */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
-    <div id="title-screen">
-        <h1>Elon’s Electric Trivia Throwdown</h1>
-        <button id="start-btn">Start Quiz</button>
+    <!-- 시작 화면 -->
+    <div id="시작화면">
+        <h1>엘론의 전기 트리비아 대결</h1>
+        <button id="시작버튼">퀴즈 시작</button>
     </div>
 
-    <div id="quiz-screen">
-        <video id="background-video" autoplay loop muted>
+    <!-- 퀴즈 화면 -->
+    <div id="퀴즈화면">
+        <video id="배경비디오" autoplay loop muted>
             <source src="https://example.com/tesla-bg.mp4" type="video/mp4">
         </video>
-        <div id="question"></div>
-        <div id="timer">Time: 15s</div>
-        <div id="options"></div>
-        <div id="progress"><div id="progress-bar"></div></div>
+        <div id="질문"></div>
+        <div id="타이머">시간: 15초</div>
+        <div id="선택지"></div>
+        <div id="진행바"><div id="진행바채움"></div></div>
     </div>
 
-    <div id="score-screen">
-        <h2>Game Over!</h2>
-        <div id="final-score"></div>
-        <div id="rank"></div>
-        <button id="share-btn">Share on X</button>
-        <button id="retry-btn">Play Again</button>
+    <!-- 점수 화면 -->
+    <div id="점수화면">
+        <h2>게임 종료!</h2>
+        <div id="최종점수"></div>
+        <div id="등급"></div>
+        <button id="공유버튼">X에 공유</button>
+        <button id="다시하기버튼">다시 플레이</button>
     </div>
 
+    <script src="questions.js"></script>
     <script>
-        const questionBank = [
-            { question: "When did Tesla first ignite the EV world?", options: ["1995", "2003", "2012", "2021"], answer: "2003" },
-            { question: "What was Tesla’s debut ride?", options: ["Model X", "Roadster", "Cybertruck", "Model 3"], answer: "Roadster" },
-            { question: "How quick is the Model S Plaid’s 0-60 mph?", options: ["5 sec", "1.99 sec", "10 sec", "3 sec"], answer: "1.99 sec" },
-            { question: "What did Elon sell via The Boring Company?", options: ["Flamethrowers", "Candy", "Tunnels", "Hats"], answer: "Flamethrowers" },
-            { question: "Which Tesla went to space?", options: ["Model Y", "Roadster", "Model 3", "Cybertruck"], answer: "Roadster" },
-            { question: "What’s the Model X’s coolest trick?", options: ["Fart mode", "Falcon Wing doors", "Loud horn", "Auto wipers"], answer: "Falcon Wing doors" },
-            { question: "How far can the new Roadster go?", options: ["620 miles", "100 miles", "300 miles", "To Mars"], answer: "620 miles" },
-            { question: "What’s the Cybertruck’s towing max?", options: ["5,000 lbs", "14,000 lbs", "50 lbs", "10,000 lbs"], answer: "14,000 lbs" },
-            { question: "What did Elon smoke on Joe Rogan’s show?", options: ["Cigar", "Marijuana", "Vape", "Nothing"], answer: "Marijuana" },
-            { question: "What’s Elon’s best Tesla pickup line?", options: ["‘Wanna ride to Mars?’", "‘I’m rich’", "‘Gas sucks’", "‘Beep boop’"], answer: "‘Wanna ride to Mars?’" },
-            { question: "Where’s Tesla’s Nevada factory?", options: ["Gigafactory 1", "Love Shack", "Battery Bay", "Elon’s Garage"], answer: "Gigafactory 1" },
-            { question: "How much was FSD in 2016?", options: ["$5,000", "$500", "$50,000", "$10,000"], answer: "$5,000" },
-            { question: "Where’s Tesla’s first overseas Gigafactory?", options: ["Brazil", "China", "France", "Canada"], answer: "China" },
-            { question: "How many motors in the Plaid?", options: ["One", "Two", "Three", "Four"], answer: "Three" },
-            { question: "What’s Elon and Grimes’ baby’s name?", options: ["Tesla Jr.", "X Æ A-Xii", "Cyber Kid", "Battery Boo"], answer: "X Æ A-Xii" },
-            { question: "What’s the Cybertruck’s armor?", options: ["Steel", "Sugar", "Cardboard", "Plastic"], answer: "Steel" },
-            { question: "How much did Tesla stock jump in 2020?", options: ["10%", "700%", "1%", "50%"], answer: "700%" },
-            { question: "What’s the Model Y’s best feature?", options: ["Curves", "Gas mileage", "Exhaust", "Windows"], answer: "Curves" },
-            { question: "What did Elon wear to the Cybertruck reveal?", options: ["Tuxedo", "All black", "Speedo", "Onesie"], answer: "All black" },
-            { question: "How many Teslas delivered in 2024?", options: ["100", "1.8 million", "50,000", "10"], answer: "1.8 million" }
-        ];
+        // 전체 질문 뱅크 설정
+        const 전체질문뱅크 = 질문뱅크.map(질문 => ({ ...질문, 사용됨: false }));
 
-        // Simulate 500 questions
-        const fullQuestionBank = [];
-        for (let i = 0; i < 500; i++) {
-            const base = questionBank[i % questionBank.length];
-            fullQuestionBank.push({
-                question: `${base.question} (Q${i + 1})`,
-                options: base.options.slice(),
-                answer: base.answer,
-                used: false // Track usage
-            });
+        // 게임 변수
+        let 현재질문 = 0;
+        let 점수 = 0;
+        let 타이머;
+        const 게임당질문수 = 10;
+        let 선택된질문들 = [];
+        let 사용가능질문들 = JSON.parse(localStorage.getItem('사용가능질문들')) || 전체질문뱅크.slice();
+
+        // 처음 로드 시 질문 풀 초기화
+        if (사용가능질문들.length === 전체질문뱅크.length) {
+            사용가능질문들 = 전체질문뱅크.slice();
+            localStorage.setItem('사용가능질문들', JSON.stringify(사용가능질문들));
         }
 
-        let currentQuestion = 0;
-        let score = 0;
-        let timer;
-        const questionsPerGame = 10;
-        let selectedQuestions = [];
-        let usedQuestionIndices = JSON.parse(localStorage.getItem('usedQuestions')) || [];
+        // DOM 요소 가져오기
+        const 시작화면 = document.getElementById('시작화면');
+        const 퀴즈화면 = document.getElementById('퀴즈화면');
+        const 점수화면 = document.getElementById('점수화면');
+        const 시작버튼 = document.getElementById('시작버튼');
+        const 질문요소 = document.getElementById('질문');
+        const 선택지요소 = document.getElementById('선택지');
+        const 타이머요소 = document.getElementById('타이머');
+        const 진행바채움 = document.getElementById('진행바채움');
+        const 최종점수요소 = document.getElementById('최종점수');
+        const 등급요소 = document.getElementById('등급');
+        const 공유버튼 = document.getElementById('공유버튼');
+        const 다시하기버튼 = document.getElementById('다시하기버튼');
 
-        const titleScreen = document.getElementById('title-screen');
-        const quizScreen = document.getElementById('quiz-screen');
-        const scoreScreen = document.getElementById('score-screen');
-        const startBtn = document.getElementById('start-btn');
-        const questionEl = document.getElementById('question');
-        const optionsEl = document.getElementById('options');
-        const timerEl = document.getElementById('timer');
-        const progressBar = document.getElementById('progress-bar');
-        const finalScoreEl = document.getElementById('final-score');
-        const rankEl = document.getElementById('rank');
-        const shareBtn = document.getElementById('share-btn');
-        const retryBtn = document.getElementById('retry-btn');
+        // 이벤트 리스너 추가
+        시작버튼.addEventListener('click', 퀴즈시작);
+        다시하기버튼.addEventListener('click', 초기화하고시작);
+        공유버튼.addEventListener('click', 점수공유);
 
-        startBtn.addEventListener('click', startQuiz);
-        retryBtn.addEventListener('click', resetAndStart);
-        shareBtn.addEventListener('click', shareScore);
-
-        function startQuiz() {
-            titleScreen.style.display = 'none';
-            quizScreen.style.display = 'block';
-            selectedQuestions = getRandomQuestions();
-            loadQuestion();
+        // 퀴즈 시작 함수
+        function 퀴즈시작() {
+            시작화면.style.display = 'none';
+            퀴즈화면.style.display = 'block';
+            선택된질문들 = 무작위질문가져오기();
+            질문불러오기();
         }
 
-        function getRandomQuestions() {
-            const availableQuestions = fullQuestionBank.filter((q, index) => !usedQuestionIndices.includes(index));
-            if (availableQuestions.length < questionsPerGame) {
-                usedQuestionIndices = []; // Reset if all questions used
-                localStorage.setItem('usedQuestions', JSON.stringify(usedQuestionIndices));
-                return getRandomQuestions(); // Recurse with fresh pool
+        // 무작위 질문 가져오기 함수
+        function 무작위질문가져오기() {
+            if (사용가능질문들.length < 게임당질문수) {
+                console.log("질문 풀이 부족해 초기화합니다!");
+                사용가능질문들 = 전체질문뱅크.slice();
             }
 
-            const shuffled = availableQuestions.sort(() => 0.5 - Math.random());
-            const selected = shuffled.slice(0, questionsPerGame).map(q => {
-                const options = q.options.slice().sort(() => 0.5 - Math.random());
-                return { ...q, options };
+            const 섞인질문들 = 사용가능질문들.sort(() => 0.5 - Math.random());
+            const 선택됨 = 섞인질문들.slice(0, 게임당질문수).map(질문 => {
+                const 선택지 = 질문.선택지.slice().sort(() => 0.5 - Math.random());
+                return { ...질문, 선택지 };
             });
 
-            selected.forEach(q => {
-                const index = fullQuestionBank.findIndex(fq => fq.question === q.question);
-                usedQuestionIndices.push(index);
+            선택됨.forEach(질문 => {
+                const 인덱스 = 사용가능질문들.findIndex(사용질문 => 사용질문.질문 === 질문.질문);
+                if (인덱스 !== -1) 사용가능질문들.splice(인덱스, 1);
             });
-            localStorage.setItem('usedQuestions', JSON.stringify(usedQuestionIndices));
+            localStorage.setItem('사용가능질문들', JSON.stringify(사용가능질문들));
+            console.log(`남은 질문 수: ${사용가능질문들.length}`);
 
-            return selected;
+            return 선택됨;
         }
 
-        function loadQuestion() {
-            const q = selectedQuestions[currentQuestion];
-            questionEl.textContent = q.question;
-            optionsEl.innerHTML = '';
-            q.options.forEach(option => {
-                const btn = document.createElement('button');
-                btn.textContent = option;
-                btn.classList.add('option-btn');
-                btn.addEventListener('click', () => checkAnswer(option));
-                optionsEl.appendChild(btn);
+        // 질문 불러오기 함수
+        function 질문불러오기() {
+            const 질문 = 선택된질문들[현재질문];
+            질문요소.textContent = 질문.질문;
+            선택지요소.innerHTML = '';
+            질문.선택지.forEach(선택 => {
+                const 버튼 = document.createElement('button');
+                버튼.textContent = 선택;
+                버튼.classList.add('선택지버튼');
+                버튼.addEventListener('click', () => 정답확인(선택));
+                선택지요소.appendChild(버튼);
             });
-            progressBar.style.width = `${((currentQuestion + 1) / questionsPerGame) * 100}%`;
-            startTimer();
-        }
-
-        function startTimer() {
-            let timeLeft = 15;
-            timerEl.textContent = `Time: ${timeLeft}s`;
-            timer = setInterval(() => {
-                timeLeft--;
-                timerEl.textContent = `Time: ${timeLeft}s`;
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    nextQuestion();
-                }
-            }, 1000);
-        }
-
-        function checkAnswer(selected) {
-            clearInterval(timer);
-            const q = selectedQuestions[currentQuestion];
-            if (selected === q.answer) {
-                score++;
-            }
-            nextQuestion();
-        }
-
-        function nextQuestion() {
-            currentQuestion++;
-            if (currentQuestion < questionsPerGame) {
-                loadQuestion();
-            } else {
-                showScore();
-            }
-        }
-
-        function showScore() {
-            quizScreen.style.display = 'none';
-            scoreScreen.style.display = 'block';
-            finalScoreEl.textContent = `${score}/${questionsPerGame}`;
-            let rank = '';
-            if (score >= 8) rank = "Elon’s Soulmate";
-            else if (score >= 5) rank = "Tesla Tease";
-            else rank = "Gas Station Groupie";
-            rankEl.textContent = `Rank: ${rank}`;
-        }
-
-        function shareScore() {
-            const text = `I scored ${score}/${questionsPerGame} on Elon’s Electric Trivia Throwdown! Am I Elon’s Soulmate? Play now: [link]`;
-            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`);
-        }
-
-        function resetAndStart() {
-            usedQuestionIndices = [];
-            localStorage.setItem('usedQuestions', JSON.stringify(usedQuestionIndices));
-            location.reload();
-        }
-    </script>
-</body>
-</html>
+            진행바채움.style.width = `${((현재질문 + 1) / 게임당질문수...
