@@ -228,7 +228,8 @@
 
         // 점수 공유 함수
         function 점수공유() {
-            const 텍스트 = `테슬람 테스터 v1.0에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]}. 지금 플레이: https://sladoc11.github.io/trivia/`;
+            const 링크 = "https://sladoc11.github.io/trivia/";
+            const 텍스트 = `테슬람 테스터 v1.0에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]} 지금 플레이: ${링크}`;
             window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(텍스트)}`);
         }
 
