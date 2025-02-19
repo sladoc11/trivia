@@ -119,7 +119,7 @@
             transition: width 0.5s;
         }
 
-        /* 점수 화면 */
+        /* 일반 점수 화면 */
         #점수화면 {
             display: none;
             text-align: center;
@@ -160,6 +160,60 @@
             box-shadow: 0 8px 20px rgba(255, 0, 51, 0.7);
         }
 
+        /* 특별 엔딩 화면 (10점) */
+        #특별엔딩화면 {
+            display: none;
+            text-align: center;
+            padding: 20px;
+            background: rgba(0, 0, 0, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            animation: fadeIn 1.5s ease-in;
+            position: relative;
+            overflow: hidden;
+        }
+        #특별엔딩화면 h2 {
+            font-size: clamp(2.5rem, 6vw, 4rem);
+            color: #ffd700;
+            text-shadow: 0 0 20px rgba(255, 215, 0, 0.8);
+            margin-bottom: 20px;
+        }
+        #특별엔딩화면 p {
+            font-size: clamp(1.5rem, 4vw, 2rem);
+            color: #fff;
+            text-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+        }
+        #특별공유버튼, #특별다시하기버튼 {
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            background: linear-gradient(90deg, #ffd700, #ffcc00);
+            border: none;
+            border-radius: 25px;
+            color: #000;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 5px 15px rgba(255, 215, 0, 0.5);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        #특별공유버튼:hover, #특별다시하기버튼:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(255, 215, 0, 0.7);
+        }
+
+        /* 폭죽 애니메이션 */
+        .firework {
+            position: absolute;
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            animation: explode 1s ease-out forwards;
+            opacity: 0;
+        }
+        @keyframes explode {
+            0% { transform: scale(0); opacity: 1; }
+            100% { transform: scale(3); opacity: 0; }
+        }
+
         /* 애니메이션 */
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
@@ -167,8 +221,8 @@
         /* 반응형 조정 */
         @media (max-width: 600px) {
             #선택지 { grid-template-columns: 1fr; }
-            #퀴즈화면, #점수화면 { width: 95%; padding: 15px; }
-            #시작버튼, #공유버튼, #다시하기버튼 { width: 80%; max-width: 300px; }
+            #퀴즈화면, #점수화면, #특별엔딩화면 { width: 95%; padding: 15px; }
+            #시작버튼, #공유버튼, #다시하기버튼, #특별공유버튼, #특별다시하기버튼 { width: 80%; max-width: 300px; }
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
@@ -190,13 +244,21 @@
         <div id="진행바"><div id="진행바채움"></div></div>
     </div>
 
-    <!-- 점수 화면 -->
+    <!-- 일반 점수 화면 -->
     <div id="점수화면">
         <h2>게임 종료!</h2>
         <div id="최종점수"></div>
         <div id="등급"></div>
         <button id="공유버튼">X에 공유</button>
         <button id="다시하기버튼">다시 플레이</button>
+    </div>
+
+    <!-- 특별 엔딩 화면 (10점) -->
+    <div id="특별엔딩화면">
+        <h2>축하합니다!</h2>
+        <p>당신은 일론 머스크!</p>
+        <button id="특별공유버튼">X에 공유</button>
+        <button id="특별다시하기버튼">다시 플레이</button>
     </div>
 
     <!-- 질문 뱅크 로드 -->
@@ -232,6 +294,7 @@
         const 시작화면 = document.getElementById('시작화면');
         const 퀴즈화면 = document.getElementById('퀴즈화면');
         const 점수화면 = document.getElementById('점수화면');
+        const 특별엔딩화면 = document.getElementById('특별엔딩화면');
         const 시작버튼 = document.getElementById('시작버튼');
         const 질문요소 = document.getElementById('질문');
         const 선택지요소 = document.getElementById('선택지');
@@ -241,12 +304,16 @@
         const 등급요소 = document.getElementById('등급');
         const 공유버튼 = document.getElementById('공유버튼');
         const 다시하기버튼 = document.getElementById('다시하기버튼');
+        const 특별공유버튼 = document.getElementById('특별공유버튼');
+        const 특별다시하기버튼 = document.getElementById('특별다시하기버튼');
 
         // 이벤트 리스너 추가
         console.log('시작 버튼에 이벤트 리스너를 추가합니다.');
         시작버튼.addEventListener('click', 퀴즈시작);
         다시하기버튼.addEventListener('click', 초기화하고시작);
         공유버튼.addEventListener('click', 점수공유);
+        특별공유버튼.addEventListener('click', 점수공유);
+        특별다시하기버튼.addEventListener('click', 초기화하고시작);
 
         // 퀴즈 시작 함수
         function 퀴즈시작() {
@@ -335,7 +402,12 @@
         // 점수 보여주기 함수
         function 점수보여주기() {
             퀴즈화면.style.display = 'none';
-            점수화면.style.display = 'block';
+            if (점수 === 10) {
+                특별엔딩화면.style.display = 'block';
+                폭죽애니메이션();
+            } else {
+                점수화면.style.display = 'block';
+            }
             최종점수요소.textContent = `${점수}/${게임당질문수}`;
             let 등급 = '';
             if (점수 === 10) 등급 = "당신은 일론 머스크!";
@@ -346,6 +418,33 @@
             else 등급 = "고든 존슨의 화장실 휴지";
             등급요소.textContent = `등급: ${등급}`;
             console.log(`게임 종료! 점수: ${점수}, 등급: ${등급}`);
+        }
+
+        // 폭죽 애니메이션 함수
+        function 폭죽애니메이션() {
+            const container = 특별엔딩화면;
+            for (let i = 0; i < 20; i++) {
+                const firework = document.createElement('div');
+                firework.classList.add('firework');
+                firework.style.left = `${Math.random() * 100}%`;
+                firework.style.top = `${Math.random() * 100}%`;
+                firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                firework.style.animationDelay = `${Math.random() * 1}s`;
+                container.appendChild(firework);
+                setTimeout(() => firework.remove(), 1000);
+            }
+            setInterval(() => {
+                for (let i = 0; i < 5; i++) {
+                    const firework = document.createElement('div');
+                    firework.classList.add('firework');
+                    firework.style.left = `${Math.random() * 100}%`;
+                    firework.style.top = `${Math.random() * 100}%`;
+                    firework.style.background = `hsl(${Math.random() * 360}, 100%, 50%)`;
+                    firework.style.animationDelay = `${Math.random() * 0.5}s`;
+                    container.appendChild(firework);
+                    setTimeout(() => firework.remove(), 1000);
+                }
+            }, 1500);
         }
 
         // 점수 공유 함수
@@ -365,8 +464,10 @@
             점수 = 0;
             현재질문 = 0;
             점수화면.style.display = 'none';
+            특별엔딩화면.style.display = 'none';
             퀴즈시작();
         }
     </script>
 </body>
 </html>
+
