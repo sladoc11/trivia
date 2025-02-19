@@ -75,10 +75,20 @@
         <button id="다시하기버튼">다시 플레이</button>
     </div>
 
+    <!-- 질문 뱅크 로드 -->
     <script src="questions.js"></script>
+    <!-- 게임 로직 -->
     <script>
+        // 질문 뱅크 로드 확인
+        if (typeof 질문뱅크 === 'undefined') {
+            console.error('questions.js가 로드되지 않았습니다!');
+            alert('질문 뱅크를 로드할 수 없습니다. questions.js 파일을 확인하세요.');
+        } else {
+            console.log('질문 뱅크가 성공적으로 로드되었습니다. 질문 수: ' + 질문뱅크.length);
+        }
+
         // 전체 질문 뱅크 설정
-        const 전체질문뱅크 = 질문뱅크.map(질문 => ({ ...질문, 사용됨: false }));
+        const 전체질문뱅크 = 질문뱅크.map(질문 => ({ ...질문 }));
 
         // 게임 변수
         let 현재질문 = 0;
@@ -88,7 +98,7 @@
         let 선택된질문들 = [];
         let 사용가능질문들 = JSON.parse(localStorage.getItem('사용가능질문들')) || 전체질문뱅크.slice();
 
-        // 처음 로드 시 질문 풀 초기화
+        // 질문 풀 초기화
         if (사용가능질문들.length === 전체질문뱅크.length) {
             사용가능질문들 = 전체질문뱅크.slice();
             localStorage.setItem('사용가능질문들', JSON.stringify(사용가능질문들));
@@ -109,12 +119,14 @@
         const 다시하기버튼 = document.getElementById('다시하기버튼');
 
         // 이벤트 리스너 추가
+        console.log('시작 버튼에 이벤트 리스너를 추가합니다.');
         시작버튼.addEventListener('click', 퀴즈시작);
         다시하기버튼.addEventListener('click', 초기화하고시작);
         공유버튼.addEventListener('click', 점수공유);
 
         // 퀴즈 시작 함수
         function 퀴즈시작() {
+            console.log('퀴즈시작 함수 호출됨');
             시작화면.style.display = 'none';
             퀴즈화면.style.display = 'block';
             선택된질문들 = 무작위질문가져오기();
@@ -123,8 +135,9 @@
 
         // 무작위 질문 가져오기 함수
         function 무작위질문가져오기() {
+            console.log('무작위 질문 가져오기 시작');
             if (사용가능질문들.length < 게임당질문수) {
-                console.log("질문 풀이 부족해 초기화합니다!");
+                console.log('질문 풀이 부족해 초기화합니다!');
                 사용가능질문들 = 전체질문뱅크.slice();
             }
 
@@ -146,6 +159,7 @@
 
         // 질문 불러오기 함수
         function 질문불러오기() {
+            console.log(`질문 ${현재질문 + 1} 불러오기`);
             const 질문 = 선택된질문들[현재질문];
             질문요소.textContent = 질문.질문;
             선택지요소.innerHTML = '';
@@ -156,4 +170,75 @@
                 버튼.addEventListener('click', () => 정답확인(선택));
                 선택지요소.appendChild(버튼);
             });
-            진행바채움.style.width = `${((현재질문 + 1) / 게임당질문수...
+            진행바채움.style.width = `${((현재질문 + 1) / 게임당질문수) * 100}%`;
+            타이머시작();
+        }
+
+        // 타이머 시작 함수
+        function 타이머시작() {
+            let 남은시간 = 15;
+            타이머요소.textContent = `시간: ${남은시간}초`;
+            타이머 = setInterval(() => {
+                남은시간--;
+                타이머요소.textContent = `시간: ${남은시간}초`;
+                if (남은시간 <= 0) {
+                    clearInterval(타이머);
+                    다음질문();
+                }
+            }, 1000);
+        }
+
+        // 정답 확인 함수
+        function 정답확인(선택) {
+            clearInterval(타이머);
+            const 질문 = 선택된질문들[현재질문];
+            if (선택 === 질문.정답) {
+                점수++;
+            }
+            다음질문();
+        }
+
+        // 다음 질문 함수
+        function 다음질문() {
+            현재질문++;
+            if (현재질문 < 게임당질문수) {
+                질문불러오기();
+            } else {
+                점수보여주기();
+            }
+        }
+
+        // 점수 보여주기 함수
+        function 점수보여주기() {
+            퀴즈화면.style.display = 'none';
+            점수화면.style.display = 'block';
+            최종점수요소.textContent = `${점수}/${게임당질문수}`;
+            let 등급 = '';
+            if (점수 === 10) 등급 = "루디크러스 모드의 제왕";
+            else if (점수 >= 8) 등급 = "일론의 오른팔";
+            else if (점수 >= 6) 등급 = "인증된 테슬람";
+            else if (점수 >= 4) 등급 = "테슬람 흉내쟁이";
+            else if (점수 >= 2) 등급 = "트로이 테스라이크의 조수";
+            else 등급 = "고든 존슨의 화장실 휴지";
+            등급요소.textContent = `등급: ${등급}`;
+            console.log(`게임 종료! 점수: ${점수}, 등급: ${등급}`);
+        }
+
+        // 점수 공유 함수
+        function 점수공유() {
+            const 텍스트 = `엘론의 전기 트리비아 대결에서 ${점수}/${게임당질문수}점을 얻었어요! 등급: ${등급요소.textContent.split(': ')[1]}. 지금 플레이: [링크]`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(텍스트)}`);
+        }
+
+        // 초기화하고 시작 함수
+        function 초기화하고시작() {
+            사용가능질문들 = 전체질문뱅크.slice();
+            localStorage.setItem('사용가능질문들', JSON.stringify(사용가능질문들));
+            점수 = 0;
+            현재질문 = 0;
+            점수화면.style.display = 'none';
+            퀴즈시작();
+        }
+    </script>
+</body>
+</html>
