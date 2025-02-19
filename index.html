@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elon’s Electric Trivia Throwdown</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #000, #1a1a3d);
+            color: #fff;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #title-screen {
+            text-align: center;
+            animation: fadeIn 2s ease-in;
+        }
+        #title-screen h1 {
+            font-size: 4em;
+            text-transform: uppercase;
+            color: #ff0033;
+            text-shadow: 0 0 20px #ff0033, 0 0 40px #ff0066;
+            animation: pulse 2s infinite;
+        }
+        #start-btn {
+            padding: 20px 40px;
+            font-size: 1.5em;
+            background: #ff0033;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            box-shadow: 0 0 15px #ff0033;
+            transition: transform 0.3s;
+        }
+        #start-btn:hover {
+            transform: scale(1.1);
+        }
+
+        #quiz-screen {
+            display: none;
+            width: 90%;
+            max-width: 800px;
+            text-align: center;
+            position: relative;
+        }
+        #background-video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            z-index: -1;
+            opacity: 0.5;
+        }
+        #question {
+            font-size: 2em;
+            margin: 20px 0;
+            text-shadow: 0 0 10px #00ccff;
+        }
+        #options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            padding: 0 20px;
+        }
+        .option-btn {
+            padding: 15px;
+            font-size: 1.2em;
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid #00ccff;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .option-btn:hover {
+            background: #00ccff;
+            color: #000;
+        }
+        #timer {
+            font-size: 1.5em;
+            margin: 10px 0;
+            color: #ffcc00;
+        }
+        #progress {
+            width: 100%;
+            height: 10px;
+            background: #333;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        #progress-bar {
+            height: 100%;
+            background: #ff0033;
+            width: 0%;
+            border-radius: 5px;
+            transition: width 0.5s;
+        }
+
+        #score-screen {
+            display: none;
+            text-align: center;
+            animation: fadeIn 2s ease-in;
+        }
+        #score-screen h2 {
+            font-size: 3em;
+            color: #00ccff;
+            text-shadow: 0 0 20px #00ccff;
+        }
+        #final-score {
+            font-size: 4em;
+            color: #ff0033;
+            animation: pulse 2s infinite;
+        }
+        #rank {
+            font-size: 2em;
+            margin: 20px 0;
+        }
+        #share-btn, #retry-btn {
+            padding: 15px 30px;
+            font-size: 1.2em;
+            background: #ff0033;
+            border: none;
+            border-radius: 10px;
+            color: #fff;
+            cursor: pointer;
+            margin: 10px;
+            box-shadow: 0 0 15px #ff0033;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+    </style>
+</head>
+<body>
+    <div id="title-screen">
+        <h1>Elon’s Electric Trivia Throwdown</h1>
+        <button id="start-btn">Start Quiz</button>
+    </div>
+
+    <div id="quiz-screen">
+        <video id="background-video" autoplay loop muted>
+            <source src="https://example.com/tesla-bg.mp4" type="video/mp4">
+        </video>
+        <div id="question"></div>
+        <div id="timer">Time: 15s</div>
+        <div id="options"></div>
+        <div id="progress"><div id="progress-bar"></div></div>
+    </div>
+
+    <div id="score-screen">
+        <h2>Game Over!</h2>
+        <div id="final-score"></div>
+        <div id="rank"></div>
+        <button id="share-btn">Share on X</button>
+        <button id="retry-btn">Play Again</button>
+    </div>
+
+    <script>
+        const questionBank = [
+            { question: "When did Tesla first ignite the EV world?", options: ["1995", "2003", "2012", "2021"], answer: "2003" },
+            { question: "What was Tesla’s debut ride?", options: ["Model X", "Roadster", "Cybertruck", "Model 3"], answer: "Roadster" },
+            { question: "How quick is the Model S Plaid’s 0-60 mph?", options: ["5 sec", "1.99 sec", "10 sec", "3 sec"], answer: "1.99 sec" },
+            { question: "What did Elon sell via The Boring Company?", options: ["Flamethrowers", "Candy", "Tunnels", "Hats"], answer: "Flamethrowers" },
+            { question: "Which Tesla went to space?", options: ["Model Y", "Roadster", "Model 3", "Cybertruck"], answer: "Roadster" },
+            { question: "What’s the Model X’s coolest trick?", options: ["Fart mode", "Falcon Wing doors", "Loud horn", "Auto wipers"], answer: "Falcon Wing doors" },
+            { question: "How far can the new Roadster go?", options: ["620 miles", "100 miles", "300 miles", "To Mars"], answer: "620 miles" },
+            { question: "What’s the Cybertruck’s towing max?", options: ["5,000 lbs", "14,000 lbs", "50 lbs", "10,000 lbs"], answer: "14,000 lbs" },
+            { question: "What did Elon smoke on Joe Rogan’s show?", options: ["Cigar", "Marijuana", "Vape", "Nothing"], answer: "Marijuana" },
+            { question: "What’s Elon’s best Tesla pickup line?", options: ["‘Wanna ride to Mars?’", "‘I’m rich’", "‘Gas sucks’", "‘Beep boop’"], answer: "‘Wanna ride to Mars?’" },
+            { question: "Where’s Tesla’s Nevada factory?", options: ["Gigafactory 1", "Love Shack", "Battery Bay", "Elon’s Garage"], answer: "Gigafactory 1" },
+            { question: "How much was FSD in 2016?", options: ["$5,000", "$500", "$50,000", "$10,000"], answer: "$5,000" },
+            { question: "Where’s Tesla’s first overseas Gigafactory?", options: ["Brazil", "China", "France", "Canada"], answer: "China" },
+            { question: "How many motors in the Plaid?", options: ["One", "Two", "Three", "Four"], answer: "Three" },
+            { question: "What’s Elon and Grimes’ baby’s name?", options: ["Tesla Jr.", "X Æ A-Xii", "Cyber Kid", "Battery Boo"], answer: "X Æ A-Xii" },
+            { question: "What’s the Cybertruck’s armor?", options: ["Steel", "Sugar", "Cardboard", "Plastic"], answer: "Steel" },
+            { question: "How much did Tesla stock jump in 2020?", options: ["10%", "700%", "1%", "50%"], answer: "700%" },
+            { question: "What’s the Model Y’s best feature?", options: ["Curves", "Gas mileage", "Exhaust", "Windows"], answer: "Curves" },
+            { question: "What did Elon wear to the Cybertruck reveal?", options: ["Tuxedo", "All black", "Speedo", "Onesie"], answer: "All black" },
+            { question: "How many Teslas delivered in 2024?", options: ["100", "1.8 million", "50,000", "10"], answer: "1.8 million" }
+        ];
+
+        // Simulate 500 questions
+        const fullQuestionBank = [];
+        for (let i = 0; i < 500; i++) {
+            const base = questionBank[i % questionBank.length];
+            fullQuestionBank.push({
+                question: `${base.question} (Q${i + 1})`,
+                options: base.options.slice(),
+                answer: base.answer,
+                used: false // Track usage
+            });
+        }
+
+        let currentQuestion = 0;
+        let score = 0;
+        let timer;
+        const questionsPerGame = 10;
+        let selectedQuestions = [];
+        let usedQuestionIndices = JSON.parse(localStorage.getItem('usedQuestions')) || [];
+
+        const titleScreen = document.getElementById('title-screen');
+        const quizScreen = document.getElementById('quiz-screen');
+        const scoreScreen = document.getElementById('score-screen');
+        const startBtn = document.getElementById('start-btn');
+        const questionEl = document.getElementById('question');
+        const optionsEl = document.getElementById('options');
+        const timerEl = document.getElementById('timer');
+        const progressBar = document.getElementById('progress-bar');
+        const finalScoreEl = document.getElementById('final-score');
+        const rankEl = document.getElementById('rank');
+        const shareBtn = document.getElementById('share-btn');
+        const retryBtn = document.getElementById('retry-btn');
+
+        startBtn.addEventListener('click', startQuiz);
+        retryBtn.addEventListener('click', resetAndStart);
+        shareBtn.addEventListener('click', shareScore);
+
+        function startQuiz() {
+            titleScreen.style.display = 'none';
+            quizScreen.style.display = 'block';
+            selectedQuestions = getRandomQuestions();
+            loadQuestion();
+        }
+
+        function getRandomQuestions() {
+            const availableQuestions = fullQuestionBank.filter((q, index) => !usedQuestionIndices.includes(index));
+            if (availableQuestions.length < questionsPerGame) {
+                usedQuestionIndices = []; // Reset if all questions used
+                localStorage.setItem('usedQuestions', JSON.stringify(usedQuestionIndices));
+                return getRandomQuestions(); // Recurse with fresh pool
+            }
+
+            const shuffled = availableQuestions.sort(() => 0.5 - Math.random());
+            const selected = shuffled.slice(0, questionsPerGame).map(q => {
+                const options = q.options.slice().sort(() => 0.5 - Math.random());
+                return { ...q, options };
+            });
+
+            selected.forEach(q => {
+                const index = fullQuestionBank.findIndex(fq => fq.question === q.question);
+                usedQuestionIndices.push(index);
+            });
+            localStorage.setItem('usedQuestions', JSON.stringify(usedQuestionIndices));
+
+            return selected;
+        }
+
+        function loadQuestion() {
+            const q = selectedQuestions[currentQuestion];
+            questionEl.textContent = q.question;
+            optionsEl.innerHTML = '';
+            q.options.forEach(option => {
+                const btn = document.createElement('button');
+                btn.textContent = option;
+                btn.classList.add('option-btn');
+                btn.addEventListener('click', () => checkAnswer(option));
+                optionsEl.appendChild(btn);
+            });
+            progressBar.style.width = `${((currentQuestion + 1) / questionsPerGame) * 100}%`;
+            startTimer();
+        }
+
+        function startTimer() {
+            let timeLeft = 15;
+            timerEl.textContent = `Time: ${timeLeft}s`;
+            timer = setInterval(() => {
+                timeLeft--;
+                timerEl.textContent = `Time: ${timeLeft}s`;
+                if (timeLeft <= 0) {
+                    clearInterval(timer);
+                    nextQuestion();
+                }
+            }, 1000);
+        }
+
+        function checkAnswer(selected) {
+            clearInterval(timer);
+            const q = selectedQuestions[currentQuestion];
+            if (selected === q.answer) {
+                score++;
+            }
+            nextQuestion();
+        }
+
+        function nextQuestion() {
+            currentQuestion++;
+            if (currentQuestion < questionsPerGame) {
+                loadQuestion();
+            } else {
+                showScore();
+            }
+        }
+
+        function showScore() {
+            quizScreen.style.display = 'none';
+            scoreScreen.style.display = 'block';
+            finalScoreEl.textContent = `${score}/${questionsPerGame}`;
+            let rank = '';
+            if (score >= 8) rank = "Elon’s Soulmate";
+            else if (score >= 5) rank = "Tesla Tease";
+            else rank = "Gas Station Groupie";
+            rankEl.textContent = `Rank: ${rank}`;
+        }
+
+        function shareScore() {
+            const text = `I scored ${score}/${questionsPerGame} on Elon’s Electric Trivia Throwdown! Am I Elon’s Soulmate? Play now: [link]`;
+            window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}`);
+        }
+
+        function resetAndStart() {
+            usedQuestionIndices = [];
+            localStorage.setItem('usedQuestions', JSON.stringify(usedQuestionIndices));
+            location.reload();
+        }
+    </script>
+</body>
+</html>
